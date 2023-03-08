@@ -27,7 +27,7 @@ public class Ex1_20190808022 {
             }
         }
     }   //Stock class
-    public static class Stock{
+    static class Stock{
         String symbol;
         String name;
         double previousClosingPrice;
@@ -54,7 +54,7 @@ public class Ex1_20190808022 {
             return previousClosingPrice;
         }
     }
-    public static class Fan{
+    static class Fan{
         final int SLOW = 1;
         final int MEDIUM = 2;
         final int FAST = 3;
