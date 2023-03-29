@@ -1,9 +1,10 @@
-//package CSE_102.LAB;
-
+/**
+ * @author: Metehan Ünal
+ * @date: 08.03.2023
+ * @version: 1.0
+ */
 import java.text.DecimalFormat;
 import java.util.Scanner;
-
-// import java.math.*;
 public class Ex1_20190808022 {
     public static void main(String[] args){
         //Test program for Stock
