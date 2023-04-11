@@ -76,7 +76,7 @@ class Product {
     public double getPrice(){
         return Price;
     }
-    public void setPrice(double price){
+    public void setPrice(double price) throws Exception{
         Price = price;
     }
     public int addToInventory(int quantity){
