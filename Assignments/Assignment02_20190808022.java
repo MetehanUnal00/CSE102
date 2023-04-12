@@ -248,3 +248,70 @@ class Store{
         return products.indexOf(p);
     }
 }
+//Custom Exceptions
+class CustomerNotFoundException extends IllegalArgumentException{
+    private String phone;
+    @Override
+    public String toString(){
+        return "CustomerNotFoundException" + phone;
+    }
+}
+class InsufficientFundsException extends RuntimeException{
+    private double total;
+    private double payment;
+    @Override
+    public String toString(){
+        return "InsufficientFundsException" + total + " due but only " + payment + " given";
+    }
+}
+class InvalidAmountException extends RuntimeException{
+    private int amount;
+    private int quantity;
+    private boolean hasQuantity;
+    public InvalidAmountException(int amount){
+        this.amount = amount;
+        this.hasQuantity = false;
+    }
+    public InvalidAmountException(int amount, int quantity){
+        this.amount = amount;
+        this.quantity = quantity;
+        this.hasQuantity = true;
+    }
+    @Override
+    public String toString(){
+        if (hasQuantity==false){
+            return "InvalidAmountException" + amount;
+        }
+        else{
+            return "InvalidAmountException" + amount + " was requested, but "
+            + "only " + quantity + " remaining";
+        }
+    }
+}
+class InvalidPriceException extends RuntimeException{
+    private double price;
+    @Override
+    public String toString(){
+        return "InvalidPriceException" + price;
+    }
+}
+class ProductNotFoundException extends IllegalArgumentException{
+    private long id;
+    private String name;
+    public ProductNotFoundException(long id){
+        this.id = id;
+        this.name = null;
+    }
+    public ProductNotFoundException(String name){
+        this.name = name;
+        this.id = -1;
+    }
+    @Override
+    public String toString(){
+        if (name != null){
+            return "ProductNotFoundException: Name - " + name;
+        }
+        else
+        return "ProductNotFoundException: ID - " + id;
+    }
+}
