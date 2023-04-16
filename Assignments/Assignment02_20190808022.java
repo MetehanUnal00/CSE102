@@ -10,53 +10,85 @@ import java.util.ArrayList;
 
 public class Assignment02_20190808022 {
     public static void main(String[] args){
-        Store s = new Store("Migros", "www.migros.com.tr");
-        Customer c = new Customer("CSE102");
-        System.out.println(c);
-        ClubCustomer cc = new ClubCustomer("Club CSE 102", "05551234567");
-        cc.addPoints(20);   //20 points       
-        cc.addPoints(30);
-        System.out.println(cc.getPhone());
-        System.out.println(cc);
-        Product p = new Product(1234, "Computer", 20, 1000.00);
-        FoodProduct fp = new FoodProduct(3456, "Snickers", 100, 2.00, 250, true, true, true, false);
-        CleaningProduct cp = new CleaningProduct(5678, "Mop", 28, 99, false, "Multi-room");
-        s.addProduct(p);
-        s.addProduct(fp);
-        s.addProduct(cp);
-        for (int i=0; i<s.getInventorySize(); i++){
-            System.out.println(s.getProduct(i));
-        }
-        s.addProduct(new Product(4321, "İphone", 50, 99.00));
-        System.out.println(s.getProductIndex(new FoodProduct(8888, "Apples", 500, 1, 50, false, false, false, false)));
-        System.out.println(cp.purchase(2)   );
-        if(fp.containsGluten()){
-            System.out.println("My wife cannot eat this "+fp.getName());
-        }
-        else{
-            System.out.println("My wife can eat this "+fp.getName());
-        }
-        s.getProduct(0).addToInventory(3);
-        for (int i=0; i<s.getInventorySize(); i++){
-            Product cur=s.getProduct(i);
-            System.out.println(cur);
-            for(int j=i+1;j<s.getInventorySize();j++){
-                if(cur.equals(s.getProduct(j)))
-                System.out.println(cur.getName()+ " is the same price as "+s.getProduct(j).getName());
-            }
+            Store s = new Store("Migros", "www.migros.com.tr");
+    
+            Customer c = new Customer("CSE 102");
+    
+            ClubCustomer cc = new ClubCustomer("Club CSE 102", "05551234567");
+    //        s.addCustomer(c);
+            s.addCustomer(cc);
+    
+            Product p = new Product(123456L, "Computer", 20, 1000.00);
+            FoodProduct fp = new FoodProduct(456798L, "snickers", 100, 2, 250, true, true, true, false);
+            CleaningProduct cp = new CleaningProduct(31654L, "Mop", 28, 99, false, "Multi-room");
+    
+            s.addProduct(p);
+            s.addProduct(fp);
+            s.addProduct(cp);
+    
+            System.out.println(s.getInventorySize());
+    //        System.out.println(s.getProduct("shoes"));
+    
+            System.out.println(cp.purchase(2));
+            s.getProduct("Computer").addToInventory(3);
+    //        System.out.println(fp.purchase(200));
+    
+            c.addToCart(p, 2);
+            c.addToCart(s.getProduct("snickers"),-2);
+            c.addToCart(s.getProduct("snickers"), 1);
+            System.out.println("Total due - " + c.getTotalDue());
+            System.out.println("\n\nReceipt:\n" + c.receipt());
+    
+    //        System.out.println("After paying: "+c.pay(2000));
+    
+            System.out.println("After paying: " + c.pay(2020));
+    
+            System.out.println("Total due - " + c.getTotalDue());
+            System.out.println("\n\nReceipt 1:\n" + c.receipt());
+    
+    //        Customer c2 = s.getCustomer("05551234568");
+            cc.addToCart(s.getProduct("snickers"), 2);
+            cc.addToCart(s.getProduct("snickers"), 1);
+            System.out.println("\n\nReceipt 2:\n" + cc.receipt());
+    
+            Customer c3 = s.getCustomer("05551234567");
+            c3.addToCart(s.getProduct("snickers"), 10);
+            System.out.println("\n\nReceipt 3:\n" + cc.receipt());
+    
+            System.out.println(((ClubCustomer) c3).pay(26, false));
+    
+            c3.addToCart(s.getProduct(31654L),3);
+            System.out.println(c3.getTotalDue());
+            System.out.println(c3.receipt());
+            System.out.println(cc.pay(3 * 99, false));
+    
+            c3.addToCart(s.getProduct(31654L), 3);
+            System.out.println(c3.getTotalDue());
+            System.out.println(c3.receipt());
+            System.out.println(cc.pay(3 * 99, true));
+    
         }
     }
-}
 class Product {
     private long Id;
     private String Name;
     private int Quantity;
     private double Price;
-    public Product (long Id, String Name, int Quantity, double Price) {
+    public Product (long Id, String Name, int Quantity, double Price) throws RuntimeException, InvalidAmountException {
         this.Id = Id;
         this.Name = Name;
-        this.Quantity = Quantity;
-        this.Price = Price;
+        if (Quantity < 0){
+            throw new InvalidAmountException(Quantity);
+        }
+        else{
+            this.Quantity = Quantity;
+        }
+        if (Price < 0){
+            throw new InvalidPriceException();
+        }
+        else{
+            this.Price = Price;
+        }
     }
     public long getId() {
         return Id;
@@ -76,20 +108,33 @@ class Product {
     public double getPrice(){
         return Price;
     }
-    public void setPrice(double price) throws Exception{
-        Price = price;
-    }
-    public int addToInventory(int quantity){
-        return Quantity += quantity;
-    }
-    public double purchase (int quantity){
-        if (quantity > Quantity){
-            System.out.println("Not enough quantity");
-            return 0;
+    public void setPrice(double Price) throws InvalidPriceException{
+        if (Price < 0){
+            throw new InvalidPriceException();
         }
         else{
-            Quantity -= quantity;
-            return quantity*Price;
+            this.Price = Price;
+        }
+    }
+    public int addToInventory(int amount) throws InvalidAmountException{
+        if (amount < 0){
+            System.out.println("Invalid Quantity");
+            return this.Quantity;
+        }
+        else{
+            return this.Quantity += amount;
+        }
+    }
+    public double purchase (int amount) throws InvalidAmountException{
+        if (amount < 0){
+            throw new InvalidAmountException(amount);
+        }
+        else if (amount > Quantity){
+            throw new InvalidAmountException(Quantity, this.Quantity);
+        }
+        else{
+            Quantity -= amount;
+            return amount*Price;
         }
     }
     public String toString(){
@@ -113,7 +158,12 @@ class FoodProduct extends Product{
     private boolean Peanuts;
     public FoodProduct(long Id, String Name, int Quantity, double Price, int Calories, boolean Dairy, boolean Gluten, boolean Eggs, boolean Peanuts) {
         super(Id, Name, Quantity, Price);
-        this.Calories = Calories;
+        if (Calories < 0){
+            throw new InvalidAmountException(Calories);
+        }
+        else{
+            this.Calories = Calories;
+        }
         this.Dairy = Dairy;
         this.Gluten = Gluten;
         this.Eggs = Eggs;
@@ -122,8 +172,13 @@ class FoodProduct extends Product{
     public int getCalories() {
         return Calories;
     }
-    public void setCalories(int calories) {
-        Calories = calories;
+    public void setCalories(int Calories) throws InvalidAmountException {
+        if (Calories < 0){
+            throw new InvalidAmountException(Calories);
+        }
+        else{
+            this.Calories = Calories;
+        }
     }
     public boolean containsDairy() {
         return Dairy;
@@ -156,8 +211,38 @@ class CleaningProduct extends Product{
         WhereToUse = whereToUse;
     }
 }
+class CartItem {
+    private Product product;
+    private int count;
+    private double total;
+    public CartItem (Product product, int count){
+        this.product = product;
+        this.count = count;
+        this.total = product.getPrice()*count;
+    }
+    public Product getProduct() {
+        return product;
+    }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+    public int getCount() {
+        return count;
+    }
+    public void setCount(int count) {
+        this.count = count;
+    }
+    public double getTotal() {
+        return total;
+    }
+    public void setTotal(double total) {
+        this.total = total;
+    }
+}
 class Customer {
     private String Name;
+    private int count;
+    private ArrayList<CartItem> Cart = new ArrayList<CartItem>();
     public Customer (String Name){
         this.Name = Name;
     }
@@ -169,6 +254,48 @@ class Customer {
     }
     public String toString(){
         return Name;
+    }
+    public void addToCart (Product product, int count){
+        try {
+            product.purchase(count);
+            Cart.add(new CartItem(product, count));
+        } catch (InvalidAmountException e) {
+            System.out.println("ERROR: Invalid Amount");
+        }
+    }
+    public void clearCart(){
+        Cart.clear();
+    }
+    public String receipt (){
+        double total=0;
+        String receipt = "";
+        for (CartItem cartitem : Cart){
+            total += cartitem.getTotal();
+            receipt += "\n"+ cartitem.getProduct().getName() + " - " + cartitem.getProduct().getPrice() 
+            + " X " + cartitem.getCount() +" = "+ cartitem.getTotal();
+        }
+        receipt += "\n-------------------------------------";
+        receipt += "\n" + "Total due = "+total;
+        return receipt;
+    } 
+    public double getTotalDue(){
+        double total = 0;
+        for (CartItem cartitem : Cart){
+            total += cartitem.getTotal();
+        }
+        return total;
+    }
+    public double pay (double amount) throws InsufficientFundsException{
+        double change = 0;
+        if (amount < getTotalDue()){
+            throw new InsufficientFundsException();
+        }
+        else{
+            System.out.println("Thank you for your purchase");
+            change = amount - getTotalDue();
+            Cart.clear();
+        }
+        return change;
     }
 }
 class ClubCustomer extends Customer{
@@ -193,14 +320,44 @@ class ClubCustomer extends Customer{
             Points += points;
         }
     }
+    public double pay(double amount, boolean usePoints) throws InsufficientFundsException{
+        double total = this.getTotalDue();
+        double change;
+        if (usePoints&&Points>0){
+            if (total*100<Points){
+                Points -= total*100;
+                Points += Math.floor(total);
+                total=0;
+                change=amount;
+            }
+            else if (total*100>Points) {
+                total -= Points * 0.01;
+                Points = 0;
+                change = amount-total;
+            }
+
+        }
+        if (amount <total){
+            throw new InsufficientFundsException();
+        }
+        else{
+            System.out.println("Thank you for your purchase");
+            change = amount - total;
+            Points += Math.floor(total);
+            this.clearCart();
+        }
+        return change;
+    }
     public String toString() {
         return super.toString() + " has " + Points + " points";
     }
 }
+
 class Store{
     private String Name;
     private String Website;
-    ArrayList<Product> products = new ArrayList<Product>();
+    private ArrayList<Product> products = new ArrayList<Product>();
+    private ArrayList<ClubCustomer> clubCustomers = new ArrayList<ClubCustomer>();
     public Store(String Name, String Website){
         this.Name = Name;
         this.Website = Website;
@@ -221,24 +378,24 @@ class Store{
     public int getInventorySize(){
         return products.size();
     }
-    public void addProduct (Product product, int index){
-        if (index < 0 || index > products.size()){
-            products.add(product);
-        }
-        else{
-            products.add(index, product);
-        }
-    }
     public void addProduct(Product product){
         products.add(product);
     }
-    public Product getProduct(int index){
-        if (index < 0 || index > products.size()){
-            return null;
+    public Product getProduct(long ID)throws ProductNotFoundException{
+            for (Product product : products){
+                if (product.getId() == ID){
+                    return product;
+                }
+            }
+        throw new ProductNotFoundException(ID);
+    }
+    public Product getProduct (String name) throws ProductNotFoundException{
+        for (Product product : products){
+            if (product.getName()==name){
+                return product;
+            }
         }
-        else{
-            return products.get(index);
-        }
+        throw new ProductNotFoundException(name);
     }
     public int getProductIndex(Product p){
         if (products.indexOf(p) == -1){
@@ -246,6 +403,44 @@ class Store{
         }
         else
         return products.indexOf(p);
+    }
+    public void addCustomer(ClubCustomer customer){
+        clubCustomers.add(customer);
+    }
+    public ClubCustomer getCustomer (String phone){
+        for (ClubCustomer clubcustomer : clubCustomers){
+            if(clubcustomer.getPhone() == phone){
+                return clubcustomer;
+            }
+        }
+        throw new CustomerNotFoundException();
+    }
+    public void removeProduct(long ID)throws ProductNotFoundException{
+        for (Product product : products){
+            if (ID == product.getId()){
+                products.remove(products.indexOf(product));
+                return;
+            }
+        }
+        throw new ProductNotFoundException(ID);
+    }
+    public void removeProduct(String name) throws ProductNotFoundException{
+        for (Product product : products){
+            if (name == product.getName()){
+                products.remove(products.indexOf(product));
+                return;
+            }
+        }
+        throw new ProductNotFoundException(name);
+    }
+    public void removeCustomer (String phone) throws CustomerNotFoundException{
+        for (ClubCustomer clubcustomer : clubCustomers){
+            if(phone == clubcustomer.getPhone()){
+                clubCustomers.remove(clubCustomers.indexOf(clubcustomer));
+                return;
+            }
+        }
+        throw new CustomerNotFoundException();
     }
 }
 //Custom Exceptions
