@@ -510,3 +510,8 @@ class ProductNotFoundException extends IllegalArgumentException{
         return "ProductNotFoundException: ID - " + id;
     }
 }
+class CartIsEmptyException extends RuntimeException{
+    public String toString(){
+        return "Your cart is empty. Please look at what we got in store for you!";
+    }
+}
