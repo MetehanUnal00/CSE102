@@ -160,8 +160,12 @@ class CreditCard implements PaymentMethod{
     }
     @Override
     public boolean pay(double amount) {
-        if (pay(amount));
+        if (pay(amount)){;
         return true;
+        }
+        else {
+            return false;
+        }
     }
 }
 class Paypal implements PaymentMethod{
