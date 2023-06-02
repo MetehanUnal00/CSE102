@@ -27,6 +27,7 @@ public class Ex1_20190808022 {
                 myArray[k]=new Fan(6, "yellow");
             }
         }
+        scan.close();
     }   //Stock class
     static class Stock{
         String symbol;
