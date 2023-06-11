@@ -1,5 +1,3 @@
-import javax.swing.Box;
-
 public class Ex8_20190808022 {
     
 }
