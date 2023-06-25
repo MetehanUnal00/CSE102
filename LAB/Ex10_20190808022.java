@@ -136,7 +136,8 @@ class Message {
         if (this.sender != reader) {
             seen = true;
         }
-        return "Sent at: " + dateSent + "\n" + "From: " + sender.getUsername() + "\n" + "Content: " + content;
+        System.out.println("Sent at: " + dateSent + "\n" + "From: " + sender.getUsername());
+        return this.content;
     }
     public boolean hasRead() {
         return seen;
